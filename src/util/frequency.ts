@@ -1,33 +1,18 @@
-import { addinlvlorder, printlvlorder, textNode } from "./textNode";
 
-export const frequencyParser = (text, hierarchy) => {
-  let freq = [];
+export const frequencyParser = (text, amount) => {
   let freqLookup = new Map();
-  let terms: String[] = text.replace(/(\r\n|\n|\r)/gm," ")
+  //There may be a better to do all this processing to get just the words that speeds up the process
+  let terms: string[] = text
+  .replace(/[^a-zA-Z0-9_]/g, ' ')
   .split(" ")
-  terms = terms.map(t => t.toLowerCase()).sort()
-  var root: textNode | null = null;
+  .filter(t => t.length !== 0)
+  .map(t => t.toLowerCase())
+
   for(const term of terms) {
     freqLookup.set(term, freqLookup.has(term) ? freqLookup.get(term) + 1 : 1);
-    root = addinlvlorder(root, term);
-    if(freq.length < hierarchy-1) {
-      freq.push({word: term, count: freqLookup.get(term)});
-    }
-    else {
-      for(var x = 0; x < freq.length; x++) {
-        if(freq[x].count < freqLookup.get(term))
-        {
-          freq.splice(x, 1, 
-            {
-              word: term, 
-              count: freqLookup.get(term)
-            })
-            break;
-        }
-      }
-    }
-  } 
+  }
 
-  printlvlorder(root)
-  return freq;
+  //Preferably get these sorted as we put them in hash map for speed
+  return [...freqLookup.entries()].sort((a, b) =>  b[1] - a[1]).slice(0, amount);
+
 }
