@@ -10,10 +10,6 @@ const port = process.env.Port || 3000;
 
 app.get('/', greeting);
 
-app.get('/peepee', (req, res) => 
-{
-  res.send('poo');
-})
 app.post('/parse', upload.single('parseTarget'), parseFile);
 
 app.listen(port, () => {

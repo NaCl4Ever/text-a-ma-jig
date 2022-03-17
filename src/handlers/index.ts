@@ -1,5 +1,5 @@
 
-import { readFile as readFileAsync} from 'fs/promises';
+import { readFile as readFileAsync, unlink} from 'fs/promises';
 import { frequencyParser } from '../util/frequency';
 
 
@@ -7,7 +7,7 @@ export const greeting = (req, res) => {
   res.send('Server is running');
 }
 
-export const parseFile = (req, res) => {
+export const parseFile = async (req, res) => {
   const { file } = req;
   const {hierarchy} = req.query;
   const parsedHierarchy = Number.parseInt(hierarchy.toString());
@@ -15,9 +15,10 @@ export const parseFile = (req, res) => {
     res.status(400).send('No files provided to parse');
   }
   
-  readFileAsync(file.path, {encoding: 'utf-8'}).then((val) =>  res.json(
-    { 
-      "frequencies": frequencyParser(val, parsedHierarchy)
-    }));
-  
+  const response = await readFileAsync(file.path, {encoding: 'utf-8'})
+
+  await unlink(file.path);
+  res.json({ 
+    "frequencies": frequencyParser(response, parsedHierarchy)
+  })
 }
