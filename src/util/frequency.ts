@@ -1,7 +1,7 @@
 export const frequencyParser = (text, hierarchy) => {
   let freq = [];
   let freqLookup = new Map();
-  let terms: String = text.replace(/(\r\n|\n|\r)/gm," ")
+  let terms: String[] = text.replace(/(\r\n|\n|\r)/gm," ")
   .split(" ")
   terms = terms.map(t => t.toLowerCase()).sort()
   for(const term of terms) {
