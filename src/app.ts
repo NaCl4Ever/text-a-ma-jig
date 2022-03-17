@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import { readFile as readFileAsync} from 'fs/promises';
+import { frequencyParser } from './util/frequency';
 const upload = multer({dest: 'uploads'});
 const app = express();
 const port = 3000;
@@ -16,37 +17,11 @@ app.post('/parse', upload.single('parseTarget'), (req, res) => {
   if(file === null) {
     res.status(400).send('No files provided to parse');
   }
-  let freq = [];
-  let freqLookup = new Map();
-  readFileAsync(file.path, {encoding: 'utf-8'}).then((val) => {
-    const terms = val.split(" ")
-    
-    for(const term of terms) {
-        freqLookup.set(term, freqLookup.has(term) ? freqLookup.get(term) + 1 : 1);
-        
-        if(freq.length < parsedHierarchy-1) {
-          freq.push({word: term, count: freqLookup.get(term)});
-        }
-        else {
-          for(var x = 0; x < freq.length; x++) {
-            if(freq[x].count < freqLookup.get(term))
-            {
-              freq.splice(x, 1, 
-                {
-                word: term, 
-                count: freqLookup.get(term)
-              })
-              break;
-            }
-          }
-        }
-
-
-    } 
-    res.json({
-      "frequencies": freq
-    })
-  });
+  
+  readFileAsync(file.path, {encoding: 'utf-8'}).then((val) =>  res.json(
+    { 
+      "frequencies": frequencyParser(val, parsedHierarchy)
+    }));
   
 })
 
