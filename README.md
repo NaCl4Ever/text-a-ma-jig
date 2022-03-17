@@ -14,13 +14,10 @@ npm start
 Server listening on https://localhost:3000
 ```
 
-YARN
-
+If you'd like you can add a .env to configure both the port and the file directory where the server will hold a temp file while it processes it. As an example here. This will set the server to launch at port 8080 and use the uploads name for the file directory 
 ```
-yarn
-~Installing bits and bobs~
-yarn start
-Server listening on https://localhost:3000
+Port=8080
+FileDirectory=uploads
 ```
 
 ## Endpoints
@@ -52,5 +49,8 @@ Returns(json):
         }
   ]
 }
+
+
+
 
 

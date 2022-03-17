@@ -1,4 +1,4 @@
-import { frequencyParser } from "./frequency";
+import { frequencyParser } from "../util/frequency";
 
 
 describe('Frequency Parser', () => {

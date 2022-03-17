@@ -1,30 +1,20 @@
 import express from 'express';
+import 'dotenv/config';
+import { Router } from "express";
 import multer from 'multer';
-import { readFile as readFileAsync} from 'fs/promises';
-import { frequencyParser } from './util/frequency';
-const upload = multer({dest: 'uploads'});
+import { greeting, parseFile } from './handlers';
+
+const upload = multer({dest: process.env.FileDirectory || 'uploads'});
 const app = express();
-const port = 3000;
+const port = process.env.Port || 3000;
 
-app.get('/', (req, res) => {
-  res.send('Server Running');
-});
+app.get('/', greeting);
 
-app.post('/parse', upload.single('parseTarget'), (req, res) => {
-  const { file } = req;
-  const {hierarchy} = req.query;
-  const parsedHierarchy = Number.parseInt(hierarchy.toString());
-  if(file === null) {
-    res.status(400).send('No files provided to parse');
-  }
-  
-  readFileAsync(file.path, {encoding: 'utf-8'}).then((val) =>  res.json(
-    { 
-      "frequencies": frequencyParser(val, parsedHierarchy)
-    }));
-  
-})
+app.post('/parse', upload.single('parseTarget'), parseFile);
 
 app.listen(port, () => {
   return console.log(`Express is listening at http://localhost:${port}`);
 });
+
+
+export default app;
